@@ -80,15 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
             expensesList.forEach((expense, index) => {
                 const row = document.createElement("tr");
                 const config = expenseTypeConfig[expense.type];
-                // إضافة زر التعديل بجانب زر الحذف
-                   row.innerHTML = `<td>${index + 1}</td><td>${config.displayName}</td><td>${expense.desc}</td><td>${config.getDetailsText(expense.details)}</td><td>${expense.total.toFixed(2)} د.ل</td><td>${expense.payer === "you" ? "أنت" : "شريكك"}</td><td>${formatDate(expense.date)}</td><td><div class="action-buttons"><button class="edit-btn" data-id="${expense.id}">تعديل</button><button class="delete-btn" data-id="${expense.id}">حذف</button></div></td>`;
+                row.innerHTML = `<td>${index + 1}</td><td>${config.displayName}</td><td>${expense.desc}</td><td>${config.getDetailsText(expense.details)}</td><td>${expense.total.toFixed(2)} د.ل</td><td>${expense.payer === "you" ? "أنت" : "شريكك"}</td><td>${formatDate(expense.date)}</td><td><div class="action-buttons"><button class="edit-btn" data-id="${expense.id}">تعديل</button><button class="delete-btn" data-id="${expense.id}">حذف</button></div></td>`;
                 expenseTableBody.appendChild(row);
                 if (expense.payer === "you") totalYou += expense.total; else totalPartner += expense.total;
             });
         }
         updateSummary(totalYou, totalPartner);
     }
-    
+
     function loadInitialData() {
         if (!db) return;
         const tx = db.transaction(["expenses"], "readonly");
@@ -103,27 +102,16 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    /**
-     * دالة جديدة: تبدأ عملية التعديل
-     */
     function startEdit(id) {
         const expenseToEdit = expensesList.find(exp => exp.id === id);
         if (!expenseToEdit) return;
-
-        // 1. الدخول في وضع التعديل
         editMode = true;
         currentEditId = id;
-
-        // 2. ملء حقول الفورم الرئيسية
         document.getElementById("desc").value = expenseToEdit.desc;
         dateInput.value = expenseToEdit.date;
         expenseTypeSelect.value = expenseToEdit.type;
         document.getElementById("payer").value = expenseToEdit.payer;
-        
-        // 3. إنشاء الحقول الديناميكية الخاصة بنوع المصروف
         createExpenseFields(expenseToEdit.type);
-
-        // 4. ملء الحقول الديناميكية بالبيانات (نستخدم setTimeout لضمان أن الحقول تم إنشاؤها)
         setTimeout(() => {
             const details = expenseToEdit.details;
             for (const key in details) {
@@ -132,65 +120,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     input.value = details[key];
                 }
             }
-            // 5. تحديث الإجمالي
             calculateTotal();
         }, 0);
-
-        // 6. تغيير شكل زر الإرسال
         submitBtn.textContent = "حفظ التعديلات";
         submitBtn.classList.remove("btn-add");
-        submitBtn.classList.add("btn-export"); // إعادة استخدام تصميم زر التصدير
-
-        // 7. الصعود لأعلى الصفحة ليسهل على المستخدم رؤية الفورم
+        submitBtn.classList.add("btn-export");
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    /**
-     * دالة جديدة: تقوم بحفظ التعديلات
-     */
     function updateExpense() {
         const { total, details } = expenseTypeConfig[expenseTypeSelect.value].calculate();
-        const updatedExpense = {
-            id: currentEditId, // نستخدم نفس الـ ID القديم
-            type: expenseTypeSelect.value,
-            desc: document.getElementById("desc").value.trim(),
-            payer: document.getElementById("payer").value,
-            date: dateInput.value,
-            total,
-            details
-        };
-
+        const updatedExpense = { id: currentEditId, type: expenseTypeSelect.value, desc: document.getElementById("desc").value.trim(), payer: document.getElementById("payer").value, date: dateInput.value, total, details };
         const tx = db.transaction(["expenses"], "readwrite");
         const store = tx.objectStore("expenses");
-        store.put(updatedExpense); // put تقوم بالتحديث إذا كان الـ ID موجوداً
-
+        store.put(updatedExpense);
         tx.oncomplete = () => {
-            // تحديث المصفوفة في الذاكرة
             const index = expensesList.findIndex(exp => exp.id === currentEditId);
             if (index !== -1) {
                 expensesList[index] = updatedExpense;
             }
             renderUI();
             showAlert("✔ تم حفظ التعديلات بنجاح!", "success");
-            resetFormState(); // إعادة الفورم لوضع الإضافة
+            resetFormState();
         };
         tx.onerror = () => showAlert("❌ فشلت عملية حفظ التعديلات.", "error");
     }
     
-    /**
-     * دالة جديدة: تقوم بإضافة مصروف جديد (نفس منطق addExpense السابق)
-     */
     function addNewExpense() {
-        if (!type || !desc || !date) {
-            showAlert("❌ تأكد من ملء جميع الحقول المطلوبة.", "error");
-            return;
-        }
-
         const type = expenseTypeSelect.value;
         const desc = document.getElementById("desc").value.trim();
         const payer = document.getElementById("payer").value;
         const date = dateInput.value;
 
+        // الآن يمكننا استخدام المتغيرات في التحقق بأمان
+        if (!type || !desc || !date) {
+            showAlert("❌ تأكد من ملء جميع الحقول المطلوبة.", "error");
+            return;
+        }
+        
         const { total, details } = expenseTypeConfig[type].calculate();
         if (total <= 0) {
             showAlert("❌ الإجمالي يجب أن يكون أكبر من الصفر.", "error");
@@ -211,9 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
         tx.onerror = () => showAlert("❌ فشلت عملية إضافة المصروف.", "error");
     }
 
-    /**
-     * دالة جديدة: المتحكم الرئيسي للفورم
-     */
     function handleFormSubmit(event) {
         event.preventDefault();
         if (editMode) {
@@ -284,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.removeChild(link);
     }
 
-    // --- باقي الدوال المساعدة ---
     function updateSummary(totalYou, totalPartner) {
         const difference = Math.abs(totalYou - totalPartner) / 2;
         const totalAll = totalYou + totalPartner;
@@ -347,18 +310,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const date = new Date(dateString);
         return isNaN(date.getTime()) || !dateString ? "تاريخ غير معروف" : date.toLocaleDateString("ar-EG", { year: 'numeric', month: 'long', day: 'numeric' });
     }
-
-    /**
-     * دالة جديدة: تعيد الفورم إلى حالته الأصلية (وضع الإضافة)
-     */
+    
     function resetFormState() {
         expenseForm.reset();
         dateInput.value = new Date().toISOString().split("T")[0];
         createExpenseFields('');
-        // الخروج من وضع التعديل
         editMode = false;
         currentEditId = null;
-        // إعادة الزر إلى حالته الأصلية
         submitBtn.textContent = "إضافة المصروف";
         submitBtn.classList.add("btn-add");
         submitBtn.classList.remove("btn-export");
@@ -374,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     expenseTableBody.addEventListener("click", (event) => {
         const target = event.target;
-        // التأكد من أن الهدف هو زر قبل محاولة قراءة dataset
         if (target.tagName === 'BUTTON') {
             const id = Number(target.dataset.id);
             if (target.classList.contains("delete-btn")) {
@@ -395,7 +352,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // تسجيل الـ Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // استخدام المسار النسبي './' لضمان الوصول للملف من نفس المجلد
     navigator.serviceWorker.register('./sw.js')
       .then(registration => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
