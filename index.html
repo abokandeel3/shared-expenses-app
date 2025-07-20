@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="نظام لإدارة وتتبع المصروفات المشتركة بين شخصين مع حساب الفروقات تلقائياً.">
+  <title>نظام إدارة المصروفات المشتركة</title>
+  <link rel="stylesheet" href="style.css">
+   <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>نظام إدارة المصروفات المشتركة</h1>
+      <p class="description">سجل مصروفاتك المشتركة بسهولة واحسب الفرق بينك وبين شريكك تلقائيًا</p>
+    </header>
+    
+    <main>
+      <div class="app-container">
+        <div class="card">
+          <h2 class="card-title">إضافة مصروف جديد</h2>
+          <form id="expenseForm">
+            <div class="form-group">
+              <label for="expenseType">نوع المصروف:</label>
+              <select id="expenseType" required>
+                <option value="">اختر نوع المصروف</option>
+                <option value="food">مصروفات مواد غذائية</option>
+                <option value="advertising">مصروفات الدعاية والاعلان</option>
+                <option value="equipment">مصروفات المعدات والأدوات</option>
+                <option value="operational">مصروفات تشغيلية</option>
+                <option value="misc">مصروفات نثرية</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="desc">اسم المنتج / الخدمة:</label>
+              <input type="text" id="desc" placeholder="مثال: فاتورة الكهرباء" required>
+            </div>
+            
+            <div class="form-group">
+              <div class="price-label">
+                <label>المبلغ (دينار):</label>
+                <span class="total-label" id="totalLabel">الإجمالي: 0.00 د.ل</span>
+              </div>
+              
+              <div id="expenseFieldsContainer">
+                <p>اختر نوع المصروف لظهور الحقول المناسبة</p>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="payer">من الذي دفع؟</label>
+              <select id="payer" required>
+                <option value="you">أنت</option>
+                <option value="partner">شريكك</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="date">تاريخ الدفع:</label>
+              <input type="date" id="date" required>
+            </div>
+            
+            <button type="submit" class="btn btn-add" aria-label="إضافة مصروف جديد">إضافة المصروف</button>
+                      <button type="button" id="exportBtn" class="btn btn-export">تصدير البيانات (CSV)</button>
+            <button type="button" id="resetBtn" class="btn btn-reset">مسح جميع المصروفات</button>
+          </form>
+        </div>
+        
+        <div class="card">
+          <h2 class="card-title">ملخص المصروفات</h2>
+          
+          <div class="summary-cards">
+            <div class="summary-card">
+              <h3>إجمالي ما دفعته أنت</h3>
+              <div class="amount you-paid">0.00 د.ل</div>
+            </div>
+            
+            <div class="summary-card">
+              <h3>إجمالي ما دفعه شريكك</h3>
+              <div class="amount partner-paid">0.00 د.ل</div>
+            </div>
+            
+            <div class="summary-card difference-card">
+              <h3>الفرق بينكم</h3>
+              <div class="amount difference-amount">0.00 د.ل</div>
+            </div>
+          </div>
+          
+          <div class="totals-container">
+            <div id="totals"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2 class="card-title">قائمة المصروفات المسجلة</h2>
+        
+        <div class="expense-table-container">
+          <table class="expense-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>النوع</th>
+                <th>الوصف</th>
+                <th>التفاصيل</th>
+                <th>الإجمالي</th>
+                <th>المدفوع بواسطة</th>
+                <th>التاريخ</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="expenseTableBody">
+              <tr>
+                <td colspan="8" class="no-expenses">لا توجد مصروفات مسجلة بعد. قم بإضافة مصروف جديد لبدء التسجيل.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    
+    <div class="footer">
+      <p>نظام إدارة المصروفات المشتركة &copy; 2025 | (c) جميع الحقوق محفوظة</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

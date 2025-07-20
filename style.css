@@ -1,0 +1,552 @@
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --success-color: #27ae60;
+      --danger-color: #e74c3c;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f6fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--primary-color), #1a2530);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+
+    @media (min-width: 768px) {
+      .app-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--light-color);
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title i {
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background-color: #1a2530;
+      transform: translateY(-2px);
+    }
+
+    .btn-reset {
+      background-color: var(--danger-color);
+      margin-top: 10px;
+    }
+
+    .btn-reset:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-add {
+      background-color: var(--success-color);
+    }
+
+    .btn-add:hover {
+      background-color: #219653;
+    }
+
+    .expense-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .expense-table th {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 12px 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .expense-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    .expense-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .expense-table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .totals-container {
+      margin-top: 25px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--secondary-color);
+    }
+
+    .total-item {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #ddd;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .total-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .difference {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      padding: 10px;
+      background-color: #e3f2fd;
+      border-radius: var(--border-radius);
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .no-expenses {
+      text-align: center;
+      padding: 30px;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .summary-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .summary-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .summary-card .amount {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .you-paid {
+      color: var(--success-color);
+    }
+
+    .partner-paid {
+      color: var(--secondary-color);
+    }
+
+    .difference-card {
+      color: var(--danger-color);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    /* التعديلات الجديدة لحقول حساب الأسعار */
+    .price-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .price-inputs input {
+      text-align: center;
+    }
+
+    .price-inputs input[readonly] {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .price-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .price-label .total-label {
+      font-weight: bold;
+      color: var(--success-color);
+    }
+
+    .price-info {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    /* إضافة استعلامات الوسائط للهواتف الذكية */
+    @media (max-width: 767px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 10px;
+      }
+
+      header {
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .description {
+        font-size: 1rem;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .card-title {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+      }
+
+      /* تحسين الجدول للهواتف */
+      .expense-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -15px;
+        padding: 0 15px;
+      }
+
+      .expense-table {
+        min-width: 600px;
+      }
+
+      .expense-table th, 
+      .expense-table td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
+
+      /* تحسين حقول الإدخال */
+      .price-inputs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .price-inputs input:last-child {
+        grid-column: span 2;
+      }
+
+      /* تحسين الأزرار */
+      .btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+
+      /* تحسين زر التصدير */
+.btn-export {
+  background-color: #16a085; /* لون أخضر مختلف */
+  margin-top: 10px;
+}
+
+.btn-export:hover {
+  background-color: #117a65;
+}
+
+/* تعديل بسيط لترتيب الأزرار على الشاشات الكبيرة */
+@media (min-width: 768px) {
+  #expenseForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  #expenseForm .form-group, #expenseForm .price-label {
+    grid-column: 1 / -1; /* لجعل الحقول تأخذ عرض كامل */
+  }
+  #expenseForm .btn {
+    margin-top: 0;
+  }
+}
+
+/* ================================== */
+/* الكود الجديد لتنسيق أزرار الإجراءات */
+/* ================================== */
+
+/* هذا هو الـ div الجديد الذي يجمع الزرين معاً */
+.action-buttons {
+  display: flex; /* أهم خاصية: تجعل العناصر بالداخل (الأزرار) متجاورة */
+  justify-content: center; /* لوضع الأزرار في منتصف الخلية */
+  align-items: center; /* لمحاذاة الأزرار عمودياً */
+  gap: 5px; /* لإضافة مسافة بين الأزرار */
+}
+
+/* هذا تنسيق مشترك للزرين ليكون لهما نفس الحجم والشكل */
+.delete-btn, .edit-btn {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  color: white;
+}
+
+/* تنسيق لون زر الحذف */
+.delete-btn {
+  background-color: var(--danger-color);
+}
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* تنسيق لون زر التعديل */
+.edit-btn {
+  background-color: #f39c12; /* لون برتقالي */
+}
+.edit-btn:hover {
+  background-color: #d35400;
+}
+
+
+      /* تحسين بطاقات الملخص */
+      .summary-cards {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    /* تحسينات عامة للجدول */
+    .expense-table-container {
+      max-height: 500px;
+      overflow-y: auto;
+      margin-top: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* إضافة دعم للمتصفحات غير webkit */
+    .expense-table-container {
+      scrollbar-width: thin;
+      scrollbar-color: #888 #f1f1f1;
+    }
+
+    .expense-table {
+      width: 100%;
+      margin: 0;
+    }
+
+    /* تحسينات للشريط الجانبي */
+    .expense-table-container::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .expense-table-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .expense-table-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .expense-table-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* تحسينات للهواتف الأفقية */
+    @media (max-width: 991px) and (orientation: landscape) {
+      .expense-table-container {
+        max-height: 300px;
+      }
+    }
+
+    /* تحسينات للأجهزة اللوحية */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .expense-table-container {
+        max-height: 400px;
+      }
+      
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* تحسينات للعرض على الشاشات الكبيرة */
+    @media (min-width: 1200px) {
+      .expense-table-container {
+        max-height: 600px;
+      }
+    }
+
+    @media print {
+      .btn, .delete-btn, .expense-table-container::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .expense-table-container {
+        overflow: visible;
+        max-height: none;
+      }
+    }
+    
+    /* التعديلات الجديدة لنوع المصروفات */
+    .expense-type-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .expense-type-fields .field-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .expense-type-fields label {
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+    }
+    
+    .hidden {
+      display: none;
+    }
