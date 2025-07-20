@@ -1,5 +1,5 @@
 // اسم الكاش الذي سنخزن فيه ملفات التطبيق
-const CACHE_NAME = 'shared-expenses-cache-v1';
+const CACHE_NAME = 'shared-expenses-cache-v2';
 
 // قائمة الملفات الأساسية التي نريد تخزينها باستخدام المسارات النسبية الصحيحة
 const assetsToCache = [

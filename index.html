@@ -40,7 +40,7 @@
             <div class="form-group">
               <div class="price-label">
                 <label>المبلغ (دينار):</label>
-                <span class="total-label" id="totalLabel">الإجمالي: 0.00 د.ل</span>
+                <span class="total-label" id="totalLabel">الإجمالي: 0.00 د.ت</span>
               </div>
               
               <div id="expenseFieldsContainer">
@@ -62,7 +62,7 @@
             </div>
             
             <button type="submit" class="btn btn-add" aria-label="إضافة مصروف جديد">إضافة المصروف</button>
-                      <button type="button" id="exportBtn" class="btn btn-export">تصدير البيانات (CSV)</button>
+            <button type="button" id="exportBtn" class="btn btn-export">تصدير البيانات (CSV)</button>
             <button type="button" id="resetBtn" class="btn btn-reset">مسح جميع المصروفات</button>
           </form>
         </div>
@@ -73,17 +73,17 @@
           <div class="summary-cards">
             <div class="summary-card">
               <h3>إجمالي ما دفعته أنت</h3>
-              <div class="amount you-paid">0.00 د.ل</div>
+              <div class="amount you-paid">0.00 د.ت</div>
             </div>
             
             <div class="summary-card">
               <h3>إجمالي ما دفعه شريكك</h3>
-              <div class="amount partner-paid">0.00 د.ل</div>
+              <div class="amount partner-paid">0.00 د.ت</div>
             </div>
             
             <div class="summary-card difference-card">
               <h3>الفرق بينكم</h3>
-              <div class="amount difference-amount">0.00 د.ل</div>
+              <div class="amount difference-amount">0.00 د.ت</div>
             </div>
           </div>
           
@@ -95,7 +95,32 @@
       
       <div class="card">
         <h2 class="card-title">قائمة المصروفات المسجلة</h2>
-        
+
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label for="searchInput">بحث بالوصف</label>
+            <input type="text" id="searchInput" placeholder="ابحث عن مصروف...">
+          </div>
+          <div class="filter-group">
+            <label for="typeFilter">فلترة بالنوع</label>
+            <select id="typeFilter">
+              <option value="all">كل الأنواع</option>
+              </select>
+          </div>
+          <div class="filter-group date-range">
+            <div>
+              <label for="startDateFilter">من تاريخ</label>
+              <input type="date" id="startDateFilter">
+            </div>
+            <div>
+              <label for="endDateFilter">إلى تاريخ</label>
+              <input type="date" id="endDateFilter">
+            </div>
+          </div>
+           <div class="filter-group">
+             <button id="resetFiltersBtn" class="btn btn-reset">إلغاء الفلترة</button>
+           </div>
+        </div>
         <div class="expense-table-container">
           <table class="expense-table">
             <thead>
@@ -112,7 +137,7 @@
             </thead>
             <tbody id="expenseTableBody">
               <tr>
-                <td colspan="8" class="no-expenses">لا توجد مصروفات مسجلة بعد. قم بإضافة مصروف جديد لبدء التسجيل.</td>
+                <td colspan="8" class="no-expenses">لا توجد مصروفات مسجلة بعد.</td>
               </tr>
             </tbody>
           </table>
