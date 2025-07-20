@@ -1,19 +1,19 @@
 // اسم الكاش الذي سنخزن فيه ملفات التطبيق
 const CACHE_NAME = 'shared-expenses-cache-v1';
 
-// قائمة الملفات الأساسية التي نريد تخزينها
+// قائمة الملفات الأساسية التي نريد تخزينها باستخدام المسارات النسبية الصحيحة
 const assetsToCache = [
-  '/',
-  'index.html',
-  'style.css',
-  'app.js',
-  'icons/icon-16x16.png',
-  'icons/icon-24x24.png',
-  'icons/icon-32x32.png',
-  'icons/icon-64x64.png',
-  'icons/icon-128x128.png',
-  'icons/icon-256x256.png',
-  'icons/icon-512x512.png'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './icons/icon-16x16.png',
+  './icons/icon-24x24.png',
+  './icons/icon-32x32.png',
+  './icons/icon-64x64.png',
+  './icons/icon-128x128.png',
+  './icons/icon-256x256.png',
+  './icons/icon-512x512.png'
 ];
 
 // 1. عند "تثبيت" الـ Service Worker، قم بفتح الكاش وتخزين الملفات

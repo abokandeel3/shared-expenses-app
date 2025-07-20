@@ -395,7 +395,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // تسجيل الـ Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    // استخدام المسار النسبي './' لضمان الوصول للملف من نفس المجلد
+    navigator.serviceWorker.register('./sw.js')
       .then(registration => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
       })
