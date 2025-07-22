@@ -7,6 +7,37 @@ document.addEventListener("DOMContentLoaded", () => {
     let editMode = false;
     let currentEditId = null;
 
+    // ============== منطق الوضع الليلي الجديد ==============
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // دالة لتطبيق المظهر
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+        } else {
+            body.classList.remove('dark-mode');
+        }
+    };
+
+    // عند النقر على الزر، قم بتبديل المظهر وحفظ الاختيار
+    themeToggle.addEventListener('click', () => {
+        const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    });
+
+    // تحقق من الاختيار المحفوظ أو إعدادات النظام عند تحميل الصفحة
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else if (systemPrefersDark) {
+        applyTheme('dark');
+    }
+    // ===================================================
+
     const request = indexedDB.open("SharedExpensesDB", 3);
     request.onerror = function () { console.error("فشل فتح قاعدة بيانات IndexedDB"); showAlert("❌ حدث خطأ كبير في قاعدة البيانات!", "error"); };
     request.onsuccess = function (event) { db = event.target.result; loadInitialData(); };
@@ -34,8 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const dateInput = document.getElementById("date");
     const exportBtn = document.getElementById("exportBtn");
     const submitBtn = expenseForm.querySelector('button[type="submit"]');
-
-    // -- عناصر الفلاتر الجديدة --
     const searchInput = document.getElementById('searchInput');
     const typeFilter = document.getElementById('typeFilter');
     const startDateFilter = document.getElementById('startDateFilter');
@@ -46,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. كائن الإعدادات المركزي
     // -------------------
     const expenseTypeConfig = {
-        food: { displayName: 'مواد غذائية', fields: `<div class="expense-type-fields"><div class="field-group"><label for="weight">الوزن (كجم)</label><input type="number" id="weight" min="0.01" step="0.01" value="1.00" required></div><div class="field-group"><label for="pricePerKilo">سعر الكيلو ((د.ت))</label><input type="number" id="pricePerKilo" min="0.01" step="0.01" value="0.00" required></div><div class="field-group"><label for="load">الحمولة (د.ت)</label><input type="number" id="load" min="0" step="0.01" value="0.00"></div><div class="field-group total-field-group"><label for="totalAmount">الإجمالي (د.ت)</label><input type="number" id="totalAmount" readonly></div></div>`, calculate: () => { const w = parseFloat(document.getElementById("weight")?.value) || 0; const p = parseFloat(document.getElementById("pricePerKilo")?.value) || 0; const l = parseFloat(document.getElementById("load")?.value) || 0; return { total: (w * p) + l, details: { weight: w, pricePerKilo: p, load: l } }; }, getDetailsText: (d) => `الوزن: ${d.weight} كجم، سعر الكيلو: ${d.pricePerKilo} د.ت، الحمولة: ${d.load} د.ت` },
+        food: { displayName: 'مواد غذائية', fields: `<div class="expense-type-fields"><div class="field-group"><label for="weight">الوزن (كجم)</label><input type="number" id="weight" min="0.01" step="0.01" value="1.00" required></div><div class="field-group"><label for="pricePerKilo">سعر الكيلو (د.ت)</label><input type="number" id="pricePerKilo" min="0.01" step="0.01" value="0.00" required></div><div class="field-group"><label for="load">الحمولة (د.ت)</label><input type="number" id="load" min="0" step="0.01" value="0.00"></div><div class="field-group total-field-group"><label for="totalAmount">الإجمالي (د.ت)</label><input type="number" id="totalAmount" readonly></div></div>`, calculate: () => { const w = parseFloat(document.getElementById("weight")?.value) || 0; const p = parseFloat(document.getElementById("pricePerKilo")?.value) || 0; const l = parseFloat(document.getElementById("load")?.value) || 0; return { total: (w * p) + l, details: { weight: w, pricePerKilo: p, load: l } }; }, getDetailsText: (d) => `الوزن: ${d.weight} كجم، سعر الكيلو: ${d.pricePerKilo} د.ت، الحمولة: ${d.load} د.ت` },
         advertising: { displayName: 'دعاية وإعلان', fields: `<div class="expense-type-fields"><div class="field-group"><label for="meters">عدد الأمتار</label><input type="number" id="meters" min="1" step="1" value="1" required></div><div class="field-group"><label for="pricePerMeter">سعر المتر (د.ت)</label><input type="number" id="pricePerMeter" min="0.01" step="0.01" value="0.00" required></div><div class="field-group total-field-group"><label for="totalAmount">الإجمالي (د.ت)</label><input type="number" id="totalAmount" readonly></div></div>`, calculate: () => { const m = parseFloat(document.getElementById("meters")?.value) || 0; const p = parseFloat(document.getElementById("pricePerMeter")?.value) || 0; return { total: m * p, details: { meters: m, pricePerMeter: p } }; }, getDetailsText: (d) => `عدد الأمتار: ${d.meters}، سعر المتر: ${d.pricePerMeter} د.ت` },
         equipment: { displayName: 'معدات وأدوات', fields: `<div class="expense-type-fields"><div class="field-group"><label for="quantity">العدد</label><input type="number" id="quantity" min="1" step="1" value="1" required></div><div class="field-group"><label for="unitPrice">السعر (د.ت)</label><input type="number" id="unitPrice" min="0.01" step="0.01" value="0.00" required></div><div class="field-group total-field-group"><label for="totalAmount">الإجمالي (د.ت)</label><input type="number" id="totalAmount" readonly></div></div>`, calculate: () => { const q = parseFloat(document.getElementById("quantity")?.value) || 0; const p = parseFloat(document.getElementById("unitPrice")?.value) || 0; return { total: q * p, details: { quantity: q, unitPrice: p } }; }, getDetailsText: (d) => `العدد: ${d.quantity}، السعر: ${d.unitPrice} د.ت` },
         operational: { displayName: 'تشغيلية', fields: `<div class="expense-type-fields"><div class="field-group total-field-group"><label for="price">السعر (د.ت)</label><input type="number" id="price" min="0.01" step="0.01" value="0.00" required></div><div class="field-group total-field-group"><label for="totalAmount">الإجمالي (د.ت)</label><input type="number" id="totalAmount" readonly></div></div>`, calculate: () => { const p = parseFloat(document.getElementById("price")?.value) || 0; return { total: p, details: { price: p } }; }, getDetailsText: (d) => `السعر: ${d.price} د.ت` },
@@ -276,9 +305,9 @@ document.addEventListener("DOMContentLoaded", () => {
             direction = `يجب أن تدفع لشريكك ${difference.toFixed(2)} د.ت`;
         }
         totalsContainer.innerHTML = `<div class="total-item">💰 إجمالي ما دفعته أنت: <strong>${totalYou.toFixed(2)} د.ت</strong></div><div class="total-item">💰 إجمالي ما دفعه شريكك: <strong>${totalPartner.toFixed(2)} د.ت</strong></div><div class="total-item">📊 إجمالي المصروفات: <strong>${totalAll.toFixed(2)} د.ت</strong></div><div class="difference">⚖️ ${direction}</div>`;
-        youPaidSummary.textContent = `${totalYou.toFixed(2)} د.ت`;
-        partnerPaidSummary.textContent = `${totalPartner.toFixed(2)} د.ت`;
-        differenceAmountSummary.textContent = `${difference.toFixed(2)} د.ت`;
+              youPaidSummary.textContent = `${totalYou.toFixed(2)} د.ت`;
+              partnerPaidSummary.textContent = `${totalPartner.toFixed(2)} د.ت`; // <-- التصحيح
+              differenceAmountSummary.textContent = `${difference.toFixed(2)} د.ت`; // <-- والتصحيح
     }
 
     function createExpenseFields(type) {
