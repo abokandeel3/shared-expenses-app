@@ -1,5 +1,5 @@
 // اسم الكاش الذي سنخزن فيه ملفات التطبيق
-const CACHE_NAME = 'shared-expenses-cache-v4';
+const CACHE_NAME = 'shared-expenses-cache-v13'; // <-- تم تحديث الإصدار
 
 // قائمة الملفات الأساسية التي نريد تخزينها باستخدام المسارات النسبية الصحيحة
 const assetsToCache = [
@@ -28,18 +28,41 @@ self.addEventListener('install', event => {
   );
 });
 
-// 2. عند طلب أي ملف (مثل صورة أو صفحة)، تحقق أولاً من الكاش
+// 2. عند طلب أي ملف، استخدم استراتيجية Stale-While-Revalidate
 self.addEventListener('fetch', event => {
+  // تجاهل الطلبات التي ليست من نوع GET
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // إذا وجدنا الملف في الكاش، قم بإرجاعه
-        if (response) {
-          return response;
-        }
-        // إذا لم نجده، اذهب إلى الشبكة لجلبه
-        return fetch(event.request);
-      }
-    )
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(response => {
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          
+          // تأكد من أن الطلب صالح وأنه من تطبيقك قبل تخزينه
+          if (networkResponse && networkResponse.status === 200 && event.request.url.startsWith('http')) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        });
+
+        // أرجع النسخة المخزنة فوراً إذا كانت موجودة، وإلا انتظر الجلب من الشبكة
+        // هذا يضمن عمل التطبيق حتى لو كان المستخدم غير متصل بالإنترنت
+        return response || fetchPromise;
+      });
+    })
+  );
+});
+
+// 3. عند "تفعيل" الـ Service Worker الجديد، قم بحذف أي كاش قديم
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
+      );
+    })
   );
 });
